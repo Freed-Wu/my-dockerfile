@@ -43,6 +43,7 @@ RUN git clone --depth=1 $github/Freed-Wu/my-dotfiles . \
       && TERM=screen-256color TMUX= zsh -isc '@zinit-scheduler burst' \
       && .config/tmux/plugins/tpm/bin/install_plugins \
       && vi -c'call dein#update() | quit' \
+      && pip install rich \
       && rm -rf .cache
 
 # bitahub will create some directories which need root privilege
