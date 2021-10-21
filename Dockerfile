@@ -12,6 +12,7 @@ ARG user=wzy
 ARG home=/home/$user
 ARG github=https://hub.fastgit.org
 
+# https://unix.stackexchange.com/questions/56765/creating-a-user-without-a-password/472968
 RUN sed -i s/archive.ubuntu.com/mirrors.ustc.edu.cn/g /etc/apt/sources.list \
       && apt-get -y update \
       && apt-get -y install \
@@ -22,9 +23,11 @@ RUN sed -i s/archive.ubuntu.com/mirrors.ustc.edu.cn/g /etc/apt/sources.list \
       git \
       && sed -i 's/^#PermitRootLogin .*/PermitRootLogin yes/' \
       /etc/ssh/sshd_config \
+      && sed -i 's/^#PermitEmptyPasswords .*/PermitEmptyPasswords yes/' \
+      /etc/ssh/sshd_config \
       && ssh-keygen -A \
       && useradd -ms/bin/zsh -k/dev/null -d$home $user \
-      && echo $user:$user | chpasswd \
+      && echo $user:U6aMy0wojraho | chpasswd -e \
       && echo root:root | chpasswd \
       && gpasswd -a$user sudo \
       && echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers \
@@ -43,7 +46,7 @@ RUN git clone --depth=1 $github/Freed-Wu/my-dotfiles . \
       && TERM=screen-256color TMUX= zsh -isc '@zinit-scheduler burst' \
       && .config/tmux/plugins/tpm/bin/install_plugins \
       && vi -c'call dein#update() | quit' \
-      && pip install rich \
+      && pip install rich ptpython \
       && rm -rf .cache
 
 # bitahub will create some directories which need root privilege
