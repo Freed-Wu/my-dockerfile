@@ -26,7 +26,7 @@ RUN sed -i s/archive.ubuntu.com/mirrors.ustc.edu.cn/g /etc/apt/sources.list \
       && sed -i 's/^#PermitEmptyPasswords .*/PermitEmptyPasswords yes/' \
       /etc/ssh/sshd_config \
       && ssh-keygen -A \
-      && useradd -ms/bin/zsh -k/dev/null -d$home $user \
+      && useradd -ms/bin/zsh -k/dev/null -d$home -g65534 $user \
       && echo $user:U6aMy0wojraho | chpasswd -e \
       && echo root:root | chpasswd \
       && gpasswd -a$user sudo \
