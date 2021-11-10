@@ -24,6 +24,9 @@ Password is same as user name.
 
 ```shell
 ssh -pPORT root@202.38.95.26
+# password is "root"
+# or
+ssh -pPORT wzy@202.38.95.26
 # password is ""
 cd /code
 sudo chmod 777 .

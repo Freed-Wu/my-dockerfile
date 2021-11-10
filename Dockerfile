@@ -8,13 +8,10 @@ FROM pytorch/pytorch:1.6.0-cuda10.1-cudnn7-runtime
 EXPOSE 22
 CMD ["/usr/sbin/sshd", "-D"]
 
-# if any file which belongs to other user exists in /code,
-# commit task will fail.
-ARG user=root
-ARG home=/root
+ARG user=wzy
+ARG home=/home/$user
 ARG github=https://hub.fastgit.org
 
-# && useradd -ms/bin/zsh -k/dev/null -d$home -g65534 $user \
 # https://unix.stackexchange.com/questions/56765/creating-a-user-without-a-password/472968
 RUN sed -i s/archive.ubuntu.com/mirrors.ustc.edu.cn/g /etc/apt/sources.list \
       && apt-get -y update \
@@ -24,24 +21,23 @@ RUN sed -i s/archive.ubuntu.com/mirrors.ustc.edu.cn/g /etc/apt/sources.list \
       nvidia-utils-470-server \
       zsh neovim tmux \
       git \
-      python3-pip \
       && sed -i 's/^#PermitRootLogin .*/PermitRootLogin yes/' \
       /etc/ssh/sshd_config \
       && sed -i 's/^#PermitEmptyPasswords .*/PermitEmptyPasswords yes/' \
       /etc/ssh/sshd_config \
       && ssh-keygen -A \
+      && useradd -ms/bin/zsh -k/dev/null -d$home -g65534 $user \
       && echo $user:U6aMy0wojraho | chpasswd -e \
-      && chsh -s/bin/zsh \
+      && echo root:root | chpasswd \
+      && gpasswd -a$user sudo \
       && echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers \
-      && rm -rf /var/lib/apt/lists/* /var/cache/* /tmp/* /var/tmp/* \
-      && rm -rf $home
+      && rm -rf /var/lib/apt/lists/* /var/cache/* /tmp/* /var/tmp/*
 
 USER $user
-WORKDIR /
-# about zinit in docker, see <https://github.com/zdharma/zinit/issues/484>
-RUN git clone --depth=1 $github/Freed-Wu/my-dotfiles $home
 WORKDIR $home
-RUN git clone --depth=1 $github/Freed-Wu/my-init.vim .config/nvim \
+# about zinit in docker, see <https://github.com/zdharma/zinit/issues/484>
+RUN git clone --depth=1 $github/Freed-Wu/my-dotfiles . \
+      && git clone --depth=1 $github/Freed-Wu/my-init.vim .config/nvim \
       && git clone --depth=1 $github/Shougo/dein.vim \
       .local/share/nvim/repos/github.com/Shougo/dein.vim \
       && git clone --depth=1 $github/zdharma-continuum/zinit \
@@ -51,7 +47,7 @@ RUN git clone --depth=1 $github/Freed-Wu/my-init.vim .config/nvim \
       && TERM=screen-256color TMUX= zsh -isc '@zinit-scheduler burst' \
       && .config/tmux/plugins/tpm/bin/install_plugins \
       && vi -c'call dein#update() | quit' \
-      && pip3 install rich ptpython \
+      && pip install rich ptpython \
       && rm -rf .cache
 
 # bitahub will create some directories which need root privilege
