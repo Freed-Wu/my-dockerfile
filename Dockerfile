@@ -40,7 +40,8 @@ RUN git clone --depth=1 $github/Freed-Wu/my-dotfiles . \
       && git clone --depth=1 $github/Freed-Wu/my-init.vim .config/nvim \
       && git clone --depth=1 $github/Shougo/dein.vim \
       .local/share/nvim/repos/github.com/Shougo/dein.vim \
-      && git clone --depth=1 $github/zdharma/zinit .zinit/plugins/zinit \
+      && git clone --depth=1 $github/zdharma-continuum/zinit \
+      .zinit/plugins/zinit \
       && git clone --depth=1 $github/tmux-plugins/tpm \
       .config/tmux/plugins/tpm \
       && TERM=screen-256color TMUX= zsh -isc '@zinit-scheduler burst' \
