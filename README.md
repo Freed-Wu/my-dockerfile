@@ -28,6 +28,9 @@ ssh -pPORT root@202.38.95.26
 # or
 ssh -pPORT wzy@202.38.95.26
 # password is ""
-cd /code
+cd /data/username/datasetname
 sudo chmod 777 .
 ```
+
+Note, bitahub have backup for `/code`, which seems to result in commit failure
+after scp any file to `/code`.
